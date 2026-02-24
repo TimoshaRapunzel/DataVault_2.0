@@ -50,6 +50,13 @@ select = [
     "SIM", # flake8-simplify
     "TID", # flake8-tidy-imports
     "RUF", # ruff-specific rules
+    
+    # === Правила, добавленные по требованию аудитора ===
+    "Q",   # flake8-quotes (проверка кавычек)
+    "FA",  # flake8-future-annotations 
+    "ISC", # flake8-implicit-str-concat
+    "PIE", # flake8-pie (микро-улучшения кода)
+    "PT",  # flake8-pytest-style (стиль тестов)
 ]
 ignore = [
     "S101",  # use of assert (acceptable in tests)
@@ -68,7 +75,7 @@ quote-style = "double"
 indent-style = "space"
 
 # ---------------------------------------------------------------------------
-# uv — fast package resolver (no lock file committed; pyproject.toml is spec)
+# uv — fast package resolver (uv.lock is REQUIRED and COMMITTED)
 # ---------------------------------------------------------------------------
 [tool.uv]
 index-url = "https://pypi.org/simple"

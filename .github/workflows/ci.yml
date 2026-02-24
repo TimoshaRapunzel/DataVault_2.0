@@ -1,4 +1,4 @@
-name: CI
+name: Retail Data Vault Pipeline CI
 
 on:
   push:
@@ -11,54 +11,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint-python:
-    name: Python Lint (ruff)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install ruff
-        run: pip install ruff>=0.4.0
-
-      - name: Run ruff
-        run: ruff check airflow/ --output-format=github
-
-  lint-sql:
-    name: SQL Lint (sqlfluff)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install sqlfluff + dbt templater
-        run: |
-          pip install \
-            sqlfluff>=3.0.0 \
-            sqlfluff-templater-dbt \
-            dbt-core==1.7.10 \
-            dbt-snowflake==1.7.0
-
-      - name: Run sqlfluff
-        run: sqlfluff lint dbt_core/models/ --dialect snowflake --format github-annotation-native
-        env:
-          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
-          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
-          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
-          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
-          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
-          SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
-
-  credential-scan:
-    name: Credential Scan (gitleaks)
+  # 1. Защита секретов (Строгое соответствие неймингу ТЗ)
+  secrets-guard:
+    name: Secrets Guard (Gitleaks)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -69,3 +24,47 @@ jobs:
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # 2. Проверка dbt и линтинг (Строгое соответствие неймингу ТЗ)
+  dbt-check:
+    name: dbt Check & Lint
+    needs: secrets-guard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install ruff sqlfluff sqlfluff-templater-dbt dbt-snowflake==1.7.0
+
+      - name: Python Lint (ruff)
+        run: ruff check . --output-format=github
+
+      - name: SQL Lint (sqlfluff)
+        run: sqlfluff lint dbt_core/models/ --dialect snowflake
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+          SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
+
+      - name: dbt Compile Check
+        run: |
+          cd dbt_core
+          dbt deps
+          dbt compile --target dev
+        env:
+          SNOWFLAKE_ACCOUNT: "dummy"
+          SNOWFLAKE_USER: "dummy"
+          SNOWFLAKE_PASSWORD: "dummy"
+          SNOWFLAKE_ROLE: "dummy"
+          SNOWFLAKE_WAREHOUSE: "dummy"
+          SNOWFLAKE_DATABASE: "dummy"
+          SNOWFLAKE_SCHEMA: "dummy"
