@@ -1,0 +1,78 @@
+name: retail_vault
+version: "3.0.0"
+config-version: 2
+
+profile: retail_vault
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+analysis-paths: ["analyses"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+vars:
+  source_database: SNOWFLAKE_SAMPLE_DATA
+  source_schema: TPCH_SF1
+  target_database: RETAIL_VAULT
+  load_date: "{{ run_started_at.strftime('%Y-%m-%d') }}"
+  
+  # === Глобальные настройки для макросов datavault4dbt ===
+  datavault4dbt.load_date_column: 'load_ts'
+  datavault4dbt.source_column: 'record_source'
+  datavault4dbt.hash_key_alias: 'hk'
+  datavault4dbt.hash_diff_alias: 'hashdiff'
+  datavault4dbt.ldts_alias: 'load_ts'
+  datavault4dbt.rsrc_alias: 'record_source'
+
+seeds:
+  retail_vault:
+    +schema: STAGING
+    +tags: ["seed"]
+    +full_refresh: true
+
+models:
+  retail_vault:
+    # 1. Слой подготовки данных
+    staging:
+      +schema: STAGING
+      +materialized: incremental
+      +incremental_strategy: append
+      +tags: ["staging"]
+
+    # 2. Сырой слой Data Vault
+    raw_vault:
+      hubs:
+        +schema: RAW_VAULT
+        +materialized: incremental
+        +incremental_strategy: merge
+        +tags: ["raw_vault", "hub"]
+      links:
+        +schema: RAW_VAULT
+        +materialized: incremental
+        +incremental_strategy: merge
+        +tags: ["raw_vault", "link"]
+      satellites:
+        +schema: RAW_VAULT
+        +materialized: incremental
+        +incremental_strategy: merge
+        +tags: ["raw_vault", "satellite"]
+
+    # 3. Бизнес-слой (PIT таблицы, Bridge, Helper Views)
+    business_vault:
+      +schema: BUSINESS_VAULT
+      +tags: ["business_vault"]
+
+    # 4. Слой витрин данных (Факты и Измерения)
+    marts:
+      +schema: MARTS
+      +tags: ["mart"]
+
+    # 5. Слой представления (Безопасные витрины с RLS)
+    presentation:
+      +schema: PRESENTATION
+      +materialized: view
+      +tags: ["presentation"]

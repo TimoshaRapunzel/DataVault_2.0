@@ -1,0 +1,49 @@
+version: 2
+
+seeds:
+  - name: customer_marketing
+    description: >
+      Marketing enrichment data for TPCH customers 1-25.
+      Loaded via dbt seed into STAGING.CUSTOMER_MARKETING.
+    config:
+      schema: STAGING
+      tags: ["seed", "marketing"]
+      column_types:
+        customer_key: NUMBER(38, 0)
+        marketing_segment: VARCHAR(20)
+        loyalty_tier: VARCHAR(10)
+        email_opt_in: BOOLEAN
+        preferred_channel: VARCHAR(20)
+        campaign_code: VARCHAR(20)
+        registration_date: DATE
+        monthly_spend_usd: NUMBER(12, 2)
+        is_active: BOOLEAN
+    columns:
+      - name: customer_key
+        description: "FK → TPCH CUSTOMER.C_CUSTKEY."
+        tests: [not_null, unique]
+      - name: marketing_segment
+        tests:
+          - not_null
+          - accepted_values:
+              values: [AUTOMOBILE, BUILDING, FURNITURE, MACHINERY, HOUSEHOLD]
+      - name: loyalty_tier
+        tests:
+          - not_null
+          - accepted_values:
+              values: [BRONZE, SILVER, GOLD, PLATINUM]
+      - name: email_opt_in
+        tests: [not_null]
+      - name: preferred_channel
+        tests:
+          - not_null
+          - accepted_values:
+              values: [EMAIL, SMS, DIRECT_MAIL, SOCIAL]
+      - name: campaign_code
+        tests: [not_null]
+      - name: registration_date
+        tests: [not_null]
+      - name: monthly_spend_usd
+        tests: [not_null]
+      - name: is_active
+        tests: [not_null]

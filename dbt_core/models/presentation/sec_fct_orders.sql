@@ -1,0 +1,28 @@
+{{ config(
+    materialized='view',
+    secure=true,
+    tags=['presentation', 'secure', 'rls']
+) }}
+
+WITH orders AS (
+    SELECT * FROM {{ ref('fct_orders') }}
+),
+
+secure_customers AS (
+    SELECT hk_customer 
+    FROM {{ ref('sec_dim_customer') }}
+)
+
+SELECT
+    o.order_key,
+    o.customer_key,
+    o.order_date,
+    o.order_status,
+    o.total_price,
+    o.order_priority,
+    o.clerk,
+    o.ship_priority
+FROM orders o
+-- Заказы недоступных клиентов отсекутся автоматически благодаря RLS!
+INNER JOIN secure_customers sc 
+    ON o.hk_customer = sc.hk_customer

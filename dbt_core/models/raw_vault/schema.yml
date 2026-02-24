@@ -1,0 +1,94 @@
+version: 2
+
+models:
+  # ── Hubs ──────────────────────────────────────────────────────────────────
+  - name: hub_customer
+    columns:
+      - name: hk_customer
+        tests: [not_null, unique]
+  - name: hub_order
+    columns:
+      - name: hk_order
+        tests: [not_null, unique]
+  - name: hub_part
+    columns:
+      - name: hk_part
+        tests: [not_null, unique]
+  - name: hub_supplier
+    columns:
+      - name: hk_supplier
+        tests: [not_null, unique]
+  - name: hub_nation
+    columns:
+      - name: hk_nation
+        tests: [not_null, unique]
+  - name: hub_region
+    columns:
+      - name: hk_region
+        tests: [not_null, unique]
+
+  # ── Links ─────────────────────────────────────────────────────────────────
+  - name: lnk_customer_order
+    columns:
+      - name: hk_customer_order
+        tests: [not_null, unique]
+  - name: lnk_order_lineitem
+    columns:
+      - name: hk_order_lineitem
+        tests: [not_null, unique]
+  - name: lnk_part_supplier
+    columns:
+      - name: hk_part_supplier
+        tests: [not_null, unique]
+  - name: lnk_supplier_nation
+    columns:
+      - name: hk_supplier_nation
+        tests: [not_null, unique]
+  - name: lnk_nation_region
+    columns:
+      - name: hk_nation_region
+        tests: [not_null, unique]
+
+  # ── Satellites ────────────────────────────────────────────────────────────
+  - name: sat_customer_lf
+    columns:
+      - name: hk_customer
+        tests: [not_null]
+      - name: hashdiff
+        tests: [not_null]
+  - name: sat_customer_hf
+    columns:
+      - name: hk_customer
+        tests: [not_null]
+      - name: hashdiff
+        tests: [not_null]
+  - name: sat_customer_marketing
+    columns:
+      - name: hk_customer
+        tests: [not_null]
+      - name: hashdiff
+        tests: [not_null]
+  - name: sat_order_details
+    columns:
+      - name: hk_order
+        tests: [not_null]
+      - name: hashdiff
+        tests: [not_null]
+  - name: sat_part_details
+    columns:
+      - name: hk_part
+        tests: [not_null]
+      - name: hashdiff
+        tests: [not_null]
+  - name: sat_supplier_details
+    columns:
+      - name: hk_supplier
+        tests: [not_null]
+      - name: hashdiff
+        tests: [not_null]
+  - name: sat_order_lineitem
+    columns:
+      - name: hk_order_lineitem
+        tests: [not_null]
+      - name: hashdiff
+        tests: [not_null]

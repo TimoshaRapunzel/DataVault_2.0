@@ -1,0 +1,100 @@
+version: 2
+
+sources:
+  - name: tpch
+    database: SNOWFLAKE_SAMPLE_DATA
+    schema: TPCH_SF1
+    description: "TPC-H scale-factor 1 benchmark dataset (Snowflake sample data)."
+    tables:
+      - name: CUSTOMER
+        description: "Customer master — 150,000 rows."
+        columns:
+          - name: C_CUSTKEY
+          - name: C_NAME
+          - name: C_ADDRESS
+          - name: C_NATIONKEY
+          - name: C_PHONE
+          - name: C_ACCTBAL
+          - name: C_MKTSEGMENT
+          - name: C_COMMENT
+
+      - name: ORDERS
+        description: "Order header — 1,500,000 rows."
+        columns:
+          - name: O_ORDERKEY
+          - name: O_CUSTKEY
+          - name: O_ORDERSTATUS
+          - name: O_TOTALPRICE
+          - name: O_ORDERDATE
+          - name: O_ORDERPRIORITY
+          - name: O_CLERK
+          - name: O_SHIPPRIORITY
+          - name: O_COMMENT
+
+      - name: LINEITEM
+        description: "Order line items — ~6,000,000 rows."
+        columns:
+          - name: L_ORDERKEY
+          - name: L_PARTKEY
+          - name: L_SUPPKEY
+          - name: L_LINENUMBER
+          - name: L_QUANTITY
+          - name: L_EXTENDEDPRICE
+          - name: L_DISCOUNT
+          - name: L_TAX
+          - name: L_RETURNFLAG
+          - name: L_LINESTATUS
+          - name: L_SHIPDATE
+          - name: L_COMMITDATE
+          - name: L_RECEIPTDATE
+          - name: L_SHIPINSTRUCT
+          - name: L_SHIPMODE
+          - name: L_COMMENT
+
+      - name: PART
+        description: "Part master — 200,000 rows."
+        columns:
+          - name: P_PARTKEY
+          - name: P_NAME
+          - name: P_MFGR
+          - name: P_BRAND
+          - name: P_TYPE
+          - name: P_SIZE
+          - name: P_CONTAINER
+          - name: P_RETAILPRICE
+          - name: P_COMMENT
+
+      - name: SUPPLIER
+        description: "Supplier master — 10,000 rows."
+        columns:
+          - name: S_SUPPKEY
+          - name: S_NAME
+          - name: S_ADDRESS
+          - name: S_NATIONKEY
+          - name: S_PHONE
+          - name: S_ACCTBAL
+          - name: S_COMMENT
+
+      - name: PARTSUPP
+        description: "Part-Supplier availability & cost — 800,000 rows."
+        columns:
+          - name: PS_PARTKEY
+          - name: PS_SUPPKEY
+          - name: PS_AVAILQTY
+          - name: PS_SUPPLYCOST
+          - name: PS_COMMENT
+
+      - name: NATION
+        description: "Nation reference — 25 rows."
+        columns:
+          - name: N_NATIONKEY
+          - name: N_NAME
+          - name: N_REGIONKEY
+          - name: N_COMMENT
+
+      - name: REGION
+        description: "Region reference — 5 rows."
+        columns:
+          - name: R_REGIONKEY
+          - name: R_NAME
+          - name: R_COMMENT
