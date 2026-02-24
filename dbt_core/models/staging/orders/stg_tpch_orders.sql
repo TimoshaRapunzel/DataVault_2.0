@@ -18,7 +18,7 @@ enriched AS (
         {{ hash_key('order_key') }} AS hk_order,
         {{ hash_key('customer_key') }} AS hk_customer,
         {{ multi_hash_key(['customer_key', 'order_key']) }} AS hk_customer_order,
-        {{ hash_diff(['order_status', 'total_price', 'order_priority', 'clerk', 'ship_priority', 'order_date']) }} AS hashdiff,
+        {{ hash_diff(['order_status', 'total_price', 'order_priority', 'clerk', 'ship_priority', 'order_date', 'comment']) }} AS hashdiff,
         order_key,
         customer_key,
         order_status,
@@ -29,7 +29,11 @@ enriched AS (
         ship_priority,
         comment,
         CURRENT_TIMESTAMP() AS load_ts,
-        'SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.ORDERS' AS record_source
+        'SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.ORDERS' AS record_source,
+        
+        -- Даты для Effectivity Satellite:
+        CURRENT_TIMESTAMP() AS start_date,
+        TO_TIMESTAMP('9999-12-31 23:59:59') AS end_date
     FROM source
 )
 SELECT * FROM enriched

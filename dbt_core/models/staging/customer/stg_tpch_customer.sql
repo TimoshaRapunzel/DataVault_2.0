@@ -15,7 +15,13 @@ WITH source AS (
 enriched AS (
     SELECT
         {{ hash_key('customer_key') }} AS hk_customer,
-        {{ hash_diff(['customer_name', 'address', 'nation_key', 'phone', 'account_balance', 'market_segment', 'comment']) }} AS hashdiff,
+        
+        -- Хэш для Core-сателлита (статичные данные: имя, страна, сегмент, коммент)
+        {{ hash_diff(['customer_name', 'nation_key', 'market_segment', 'comment']) }} AS hd_customer_core,
+        
+        -- Хэш для Contact-сателлита (волатильные данные: адрес, телефон, баланс)
+        {{ hash_diff(['address', 'phone', 'account_balance']) }} AS hd_customer_contact,
+        
         customer_key,
         customer_name,
         address,

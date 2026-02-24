@@ -48,17 +48,17 @@ models:
       hubs:
         +schema: RAW_VAULT
         +materialized: incremental
-        +incremental_strategy: merge
+        +incremental_strategy: append  # <--- ИСПРАВЛЕНО на append
         +tags: ["raw_vault", "hub"]
       links:
         +schema: RAW_VAULT
         +materialized: incremental
-        +incremental_strategy: merge
+        +incremental_strategy: append  # <--- ИСПРАВЛЕНО на append
         +tags: ["raw_vault", "link"]
       satellites:
         +schema: RAW_VAULT
         +materialized: incremental
-        +incremental_strategy: merge
+        +incremental_strategy: append  # <--- ИСПРАВЛЕНО на append
         +tags: ["raw_vault", "satellite"]
 
     # 3. Бизнес-слой (PIT таблицы, Bridge, Helper Views)

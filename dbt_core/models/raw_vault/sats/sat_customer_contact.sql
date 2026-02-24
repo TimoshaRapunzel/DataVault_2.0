@@ -2,8 +2,8 @@
 
 {%- set source_model = "stg_tpch_customer" -%}
 {%- set parent_hashkey = "hk_customer" -%}
-{%- set src_hashdiff = "hashdiff" -%} 
-{%- set src_payload = ["customer_name", "address", "nation_key", "phone", "account_balance", "market_segment", "comment"] -%}
+{%- set src_hashdiff = "hd_customer_contact" -%}
+{%- set src_payload = ["address", "phone", "account_balance"] -%}
 {%- set src_ldts = "load_ts" -%}
 {%- set src_rsrc = "record_source" -%}
 
