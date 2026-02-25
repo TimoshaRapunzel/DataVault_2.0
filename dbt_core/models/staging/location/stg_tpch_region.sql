@@ -7,6 +7,7 @@ WITH source AS (
         r_comment AS comment
     FROM {{ source('tpch', 'REGION') }}
 ),
+
 enriched AS (
     SELECT
         {{ hash_key('region_key') }} AS hk_region,
@@ -17,4 +18,5 @@ enriched AS (
         'SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.REGION' AS record_source
     FROM source
 )
+
 SELECT * FROM enriched

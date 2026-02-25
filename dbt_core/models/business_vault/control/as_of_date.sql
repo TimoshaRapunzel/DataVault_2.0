@@ -1,6 +1,4 @@
-
 {{ config(materialized='table') }}
-
 
 
 WITH date_spine AS (
@@ -9,15 +7,13 @@ WITH date_spine AS (
 
         datepart="day",
 
-        start_date="cast('2023-01-01' as date)", 
+        start_date="cast('2023-01-01' as date)",
 
         end_date="dateadd(day, 1, current_date())"
 
     ) }}
 
 )
-
-
 
 SELECT
 
@@ -26,4 +22,3 @@ SELECT
     TRUE AS is_active
 
 FROM date_spine
-

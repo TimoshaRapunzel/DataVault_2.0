@@ -16,7 +16,7 @@ SELECT
     s.is_active,
     s.load_ts,
     s.record_source
-FROM {{ ref('hub_customer') }} h
-INNER JOIN {{ ref('sat_customer_marketing') }} s
+FROM {{ ref('hub_customer') }} AS h
+INNER JOIN {{ ref('sat_customer_marketing') }} AS s
     ON h.hk_customer = s.hk_customer
 QUALIFY ROW_NUMBER() OVER (PARTITION BY h.hk_customer ORDER BY s.load_ts DESC) = 1

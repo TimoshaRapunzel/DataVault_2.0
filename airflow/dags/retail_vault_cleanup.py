@@ -1,6 +1,7 @@
 # dags/retail_vault_cleanup.py
 import os
 from datetime import datetime
+
 from airflow.decorators import dag
 from airflow.operators.bash import BashOperator
 
@@ -10,9 +11,8 @@ from utils.constants import DEFAULT_DBT_PROJECT_DIR
 
 DBT_PROJECT_DIR = os.environ.get("DBT_PROJECT_DIR", DEFAULT_DBT_PROJECT_DIR)
 
-default_args = {
-    "on_failure_callback": on_failure_callback
-}
+default_args = {"on_failure_callback": on_failure_callback}
+
 
 @dag(
     default_args=default_args,
@@ -25,10 +25,10 @@ default_args = {
     tags=["maintenance"],
 )
 def retail_vault_cleanup():
-    
     BashOperator(
         task_id="dbt_clean",
         bash_command=f"cd {DBT_PROJECT_DIR} && dbt clean",
     )
+
 
 retail_vault_cleanup()

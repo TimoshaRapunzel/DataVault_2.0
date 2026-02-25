@@ -2,24 +2,25 @@
 
 WITH source AS (
     SELECT
-        UPPER(TRIM(CAST(l_orderkey AS VARCHAR)))   AS order_key,
-        UPPER(TRIM(CAST(l_partkey AS VARCHAR)))    AS part_key,
-        UPPER(TRIM(CAST(l_suppkey AS VARCHAR)))    AS supplier_key,
-        l_linenumber                               AS line_number,
-        l_quantity                                 AS quantity,
-        l_extendedprice                            AS extended_price,
-        l_discount                                 AS discount,
-        l_tax                                      AS tax,
-        l_returnflag                               AS return_flag,
-        l_linestatus                               AS line_status,
-        l_shipdate                                 AS ship_date,
-        l_commitdate                               AS commit_date,
-        l_receiptdate                              AS receipt_date,
-        l_shipinstruct                             AS ship_instruct,
-        l_shipmode                                 AS ship_mode,
-        l_comment                                  AS comment
+        UPPER(TRIM(CAST(l_orderkey AS VARCHAR))) AS order_key,
+        UPPER(TRIM(CAST(l_partkey AS VARCHAR))) AS part_key,
+        UPPER(TRIM(CAST(l_suppkey AS VARCHAR))) AS supplier_key,
+        l_linenumber AS line_number,
+        l_quantity AS quantity,
+        l_extendedprice AS extended_price,
+        l_discount AS discount,
+        l_tax AS tax,
+        l_returnflag AS return_flag,
+        l_linestatus AS line_status,
+        l_shipdate AS ship_date,
+        l_commitdate AS commit_date,
+        l_receiptdate AS receipt_date,
+        l_shipinstruct AS ship_instruct,
+        l_shipmode AS ship_mode,
+        l_comment AS comment
     FROM {{ source('tpch', 'LINEITEM') }}
 ),
+
 enriched AS (
     SELECT
         {{ hash_key('order_key') }} AS hk_order,
@@ -47,4 +48,5 @@ enriched AS (
         'SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.LINEITEM' AS record_source
     FROM source
 )
+
 SELECT * FROM enriched

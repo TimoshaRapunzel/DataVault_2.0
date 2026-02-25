@@ -13,6 +13,7 @@ WITH source AS (
         is_active
     FROM {{ ref('customer_marketing') }}
 ),
+
 enriched AS (
     SELECT
         {{ hash_key('customer_key') }} AS hk_customer,
@@ -30,4 +31,5 @@ enriched AS (
         'SEED.CUSTOMER_MARKETING' AS record_source
     FROM source
 )
+
 SELECT * FROM enriched

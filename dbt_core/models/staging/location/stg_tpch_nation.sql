@@ -8,6 +8,7 @@ WITH source AS (
         n_comment AS comment
     FROM {{ source('tpch', 'NATION') }}
 ),
+
 enriched AS (
     SELECT
         {{ hash_key('nation_key') }} AS hk_nation,
@@ -21,4 +22,5 @@ enriched AS (
         'SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.NATION' AS record_source
     FROM source
 )
+
 SELECT * FROM enriched

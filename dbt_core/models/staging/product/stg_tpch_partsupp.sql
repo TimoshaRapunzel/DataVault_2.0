@@ -4,11 +4,12 @@ WITH source AS (
     SELECT
         UPPER(TRIM(CAST(ps_partkey AS VARCHAR))) AS part_key,
         UPPER(TRIM(CAST(ps_suppkey AS VARCHAR))) AS supplier_key,
-        ps_availqty   AS available_qty,
+        ps_availqty AS available_qty,
         ps_supplycost AS supply_cost,
-        ps_comment    AS comment
+        ps_comment AS comment
     FROM {{ source('tpch', 'PARTSUPP') }}
 ),
+
 enriched AS (
     SELECT
         {{ hash_key('part_key') }} AS hk_part,
@@ -24,4 +25,5 @@ enriched AS (
         'SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.PARTSUPP' AS record_source
     FROM source
 )
+
 SELECT * FROM enriched

@@ -19,7 +19,7 @@ vars:
   source_schema: TPCH_SF1
   target_database: RETAIL_VAULT
   load_date: "{{ run_started_at.strftime('%Y-%m-%d') }}"
-  
+
   # === Глобальные настройки для макросов datavault4dbt ===
   datavault4dbt.load_date_column: 'load_ts'
   datavault4dbt.source_column: 'record_source'

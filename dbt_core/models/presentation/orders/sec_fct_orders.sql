@@ -9,7 +9,7 @@ WITH orders AS (
 ),
 
 secure_customers AS (
-    SELECT hk_customer 
+    SELECT hk_customer
     FROM {{ ref('sec_dim_customer') }}
 )
 
@@ -22,7 +22,7 @@ SELECT
     o.order_priority,
     o.clerk,
     o.ship_priority
-FROM orders o
+FROM orders AS o
 -- Заказы недоступных клиентов отсекутся автоматически благодаря RLS!
-INNER JOIN secure_customers sc 
+INNER JOIN secure_customers AS sc
     ON o.hk_customer = sc.hk_customer

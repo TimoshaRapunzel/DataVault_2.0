@@ -1,4 +1,4 @@
-name: Retail Data Vault Pipeline CI
+name: Retail Data Vault CI
 
 on:
   push:
@@ -6,65 +6,46 @@ on:
   pull_request:
     branches: [master, main]
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  # 1. Защита секретов (Строгое соответствие неймингу ТЗ)
+  # 1. Строгое имя по ТЗ
   secrets-guard:
-    name: Secrets Guard (Gitleaks)
+    name: "secrets-guard"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Run gitleaks
+      - name: Run Gitleaks
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # 2. Проверка dbt и линтинг (Строгое соответствие неймингу ТЗ)
+  # 2. Строгое имя по ТЗ
   dbt-check:
-    name: dbt Check & Lint
+    name: "dbt-check"
     needs: secrets-guard
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Python 3.11
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
       - name: Install dependencies
         run: |
-          pip install ruff sqlfluff sqlfluff-templater-dbt dbt-snowflake==1.7.0
-
-      - name: Python Lint (ruff)
-        run: ruff check . --output-format=github
-
-      - name: SQL Lint (sqlfluff)
-        run: sqlfluff lint dbt_core/models/ --dialect snowflake
-        env:
-          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
-          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
-          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
-          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
-          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
-          SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
-
-      - name: dbt Compile Check
+          pip install ruff pre-commit dbt-snowflake==1.7.0
+      - name: Run Lint
+        run: pre-commit run --all-files
+      - name: dbt Compile
         run: |
           cd dbt_core
           dbt deps
           dbt compile --target dev
         env:
-          SNOWFLAKE_ACCOUNT: "dummy"
-          SNOWFLAKE_USER: "dummy"
-          SNOWFLAKE_PASSWORD: "dummy"
-          SNOWFLAKE_ROLE: "dummy"
-          SNOWFLAKE_WAREHOUSE: "dummy"
-          SNOWFLAKE_DATABASE: "dummy"
-          SNOWFLAKE_SCHEMA: "dummy"
+          SNOWFLAKE_ACCOUNT: "test"
+          SNOWFLAKE_USER: "test"
+          SNOWFLAKE_PASSWORD: "test"
+          SNOWFLAKE_ROLE: "test"
+          SNOWFLAKE_DATABASE: "test"
+          SNOWFLAKE_WAREHOUSE: "test"
+          SNOWFLAKE_SCHEMA: "test"
