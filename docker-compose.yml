@@ -29,9 +29,14 @@ x-airflow-common: &airflow-common
     AIRFLOW_CONN_SNOWFLAKE_DEFAULT: "snowflake://${SNOWFLAKE_USER}:${SNOWFLAKE_PASSWORD}@${SNOWFLAKE_ACCOUNT}/${SNOWFLAKE_DATABASE}/RAW_VAULT?warehouse=${SNOWFLAKE_WAREHOUSE}&role=${SNOWFLAKE_ROLE}"
     AIRFLOW_CONN_TELEGRAM_DEFAULT: "http://:${TELEGRAM_BOT_TOKEN}@/?chat_id=${TELEGRAM_CHAT_ID}"
 
+    # === ИСПРАВЛЕНИЕ: Указываем Python, где искать модули ===
+    PYTHONPATH: "/opt/airflow"
+
   volumes:
     - ./airflow/dags:/opt/airflow/dags
     - ./airflow/plugins:/opt/airflow/plugins
+    # === ИСПРАВЛЕНИЕ: Пробрасываем папку utils в контейнер ===
+    - ./airflow/utils:/opt/airflow/utils
     - ./dbt_core:/opt/dbt_core
     - ./logs:/opt/airflow/logs
   depends_on:

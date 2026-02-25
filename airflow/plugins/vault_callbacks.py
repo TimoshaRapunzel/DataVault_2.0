@@ -1,8 +1,10 @@
 import contextlib
 
 from airflow.utils.context import Context
-from airflow.utils.telegram import send_telegram_message
 from loguru import logger
+
+# ИСПРАВЛЕНО: Убрали "airflow." в начале, теперь импортируется наша локальная функция
+from utils.telegram import send_telegram_message
 
 
 def on_failure_callback(context: Context):
