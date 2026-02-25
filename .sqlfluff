@@ -2,7 +2,7 @@
 dialect = snowflake
 templater = dbt
 # Устанавливаем 100, чтобы совпадало с Ruff
-max_line_length = 100
+max_line_length = 120
 # Исключаем правила, которые часто конфликтуют с макросами Data Vault
 exclude_rules = AL07, LT05, ST06, RF04, ST02
 

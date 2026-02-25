@@ -6,7 +6,7 @@ COMPOSE       := docker compose
 DC_EXEC       := $(COMPOSE) exec airflow-scheduler
 DBT_DIR       := dbt_core
 
-.PHONY: help rebuild initial-load clean-up lint format build up down logs clean-db
+.PHONY: help rebuild initial-load incremental-load clean-up lint format build up down logs clean-db
 
 help: ## Показать справку
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -22,6 +22,9 @@ rebuild: down ## (ТЗ) Полная пересборка Docker с нуля
 
 initial-load: ## (ТЗ) Запуск полной загрузки через Airflow DAG
 	$(DC_EXEC) airflow dags trigger retail_vault_full_load
+
+incremental-load: ## (ТЗ) Запуск инкрементальной загрузки через Airflow DAG
+	$(DC_EXEC) airflow dags trigger retail_vault_incremental
 
 clean-up: ## (ТЗ) Запуск очистки через Airflow DAG + локальная очистка кэша
 	$(DC_EXEC) airflow dags trigger retail_vault_cleanup

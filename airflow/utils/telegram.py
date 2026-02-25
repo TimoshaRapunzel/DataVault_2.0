@@ -2,11 +2,15 @@ import requests
 from airflow.models import Variable
 from loguru import logger
 
+# Строго импортируем константы
+from utils.constants import TG_CHAT_ID_VAR, TG_SECRETS_VAR
+
 
 def send_telegram_message(text: str):
     """Send telegram notification via Bot API."""
-    token = Variable.get("telegram_token", default_var=None)
-    chat_id = Variable.get("telegram_chat_id", default_var=None)
+    # Получаем значения по именам констант (без хардкода)
+    token = Variable.get(TG_SECRETS_VAR, default_var=None)
+    chat_id = Variable.get(TG_CHAT_ID_VAR, default_var=None)
 
     if not token or not chat_id:
         logger.warning("Telegram credentials not found in Airflow Variables")

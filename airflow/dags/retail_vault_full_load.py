@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 
-from airflow.decorators import dag
+from airflow import DAG
 from cosmos import DbtTaskGroup, ExecutionConfig, ProfileConfig, ProjectConfig, RenderConfig
 from cosmos.profiles import SnowflakeUserPasswordProfileMapping
 
@@ -38,19 +38,17 @@ _execution_config = ExecutionConfig(dbt_executable_path="dbt")
 
 default_args = {"on_failure_callback": on_failure_callback}
 
-
-@dag(
-    default_args=default_args,
+with DAG(
     dag_id="retail_vault_full_load",
+    default_args=default_args,
     schedule_interval=None,
     start_date=datetime(2024, 1, 1),
     catchup=False,
     on_success_callback=on_success_callback,
     tags=["retail_vault", "full_load"],
-)
-def retail_vault_full_load():
-    """DAG for full historical data load (Data Vault 2.0)."""
-    DbtTaskGroup(
+    doc_md="""DAG for full historical data load (Data Vault 2.0).""",
+) as dag:
+    full_load_vault = DbtTaskGroup(
         group_id="full_load_vault",
         project_config=_project_config,
         profile_config=_profile_config,
@@ -66,6 +64,3 @@ def retail_vault_full_load():
         ),
         operator_args={"full_refresh": True},
     )
-
-
-retail_vault_full_load()
