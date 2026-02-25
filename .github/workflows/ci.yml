@@ -42,10 +42,11 @@ jobs:
           dbt deps
           dbt compile --target dev
         env:
-          SNOWFLAKE_ACCOUNT: "test"
-          SNOWFLAKE_USER: "test"
-          SNOWFLAKE_PASSWORD: "test"
-          SNOWFLAKE_ROLE: "test"
-          SNOWFLAKE_DATABASE: "test"
-          SNOWFLAKE_WAREHOUSE: "test"
-          SNOWFLAKE_SCHEMA: "test"
+          # ИСПРАВЛЕНО: Теперь используем GitHub Secrets вместо "test"
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+          SNOWFLAKE_DATABASE: ${{ secrets.SNOWFLAKE_DATABASE }}
+          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+          SNOWFLAKE_SCHEMA: ${{ secrets.SNOWFLAKE_SCHEMA }}
