@@ -4,6 +4,7 @@ from datetime import datetime
 
 from utils.telegram import send_local_photo
 
+# Используем стандартный логгер Airflow
 logger = logging.getLogger("airflow.task")
 
 
@@ -15,7 +16,7 @@ def get_image_path(image_name: str) -> str:
 
 def on_success_callback(context):
     try:
-        print("!!! DEBUG: Запуск on_success_callback !!!")
+        logger.info("Starting on_success_callback")
 
         dag = context.get("dag")
         dag_id = dag.dag_id if dag else "Unknown DAG"
@@ -25,22 +26,21 @@ def on_success_callback(context):
         message = f"✅ <b>Победа в DAG:</b> <code>{dag_id}</code>\n<b>Время:</b> {end_time}"
 
         send_local_photo(message, image_path)
-        print(f"!!! DEBUG: Сообщение для {dag_id} успешно вызвано !!!")
-    # BLE001 ИСПРАВЛЕНИЕ: Добавляем noqa, чтобы линтер игнорировал эту строчку
+        logger.info(f"Success notification sent for DAG {dag_id}")
     except Exception as e:  # noqa: BLE001
-        print(f"!!! CALLBACK SUCCESS ERROR: {e}")
+        logger.error(f"CALLBACK SUCCESS ERROR: {e}")
 
 
 def on_failure_callback(context):
     try:
-        print("!!! DEBUG: Запуск on_failure_callback !!!")
+        logger.info("Starting on_failure_callback")
         task_instance = context.get("task_instance")
-        task_id = task_instance.task_id
+        task_id = task_instance.task_id if task_instance else "Unknown Task"
 
         image_path = get_image_path("failed.jpeg")
         message = f"❌ <b>Поражение в таске:</b> <code>{task_id}</code>"
 
         send_local_photo(message, image_path)
-    # BLE001 ИСПРАВЛЕНИЕ: Добавляем noqa
+        logger.info(f"Failure notification sent for task {task_id}")
     except Exception as e:  # noqa: BLE001
-        print(f"!!! CALLBACK FAILURE ERROR: {e}")
+        logger.error(f"CALLBACK FAILURE ERROR: {e}")
