@@ -1,6 +1,4 @@
 packages:
   - package: dbt-labs/dbt_utils
-    version: "1.3.3"  # <-- Обновили версию до свежей
-
-  # Скачиваем пакет напрямую с официального GitHub разработчиков
+    version: "1.3.3"
   - git: "https://github.com/ScalefreeCOM/datavault4dbt.git"

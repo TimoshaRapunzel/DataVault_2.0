@@ -5,8 +5,7 @@
     tags=['mart', 'dimension']
 ) }}
 
--- 1. Определяем, какие клиенты обновились
--- 1. Определяем, какие клиенты обновились
+
 WITH changed_customers AS (
     {% if is_incremental() %}
         SELECT cc.hk_customer
@@ -32,7 +31,7 @@ WITH changed_customers AS (
     {% endif %}
 ),
 
--- 2. Собираем все точки изменения времени (Spine)
+
 all_changes AS (
     SELECT
         core.hk_customer,
@@ -63,7 +62,7 @@ all_changes AS (
     WHERE contact.hk_customer IN (SELECT c2.hk_customer FROM changed_customers AS c2)
 ),
 
--- 3. Магия: заполняем пустоты последним известным значением
+
 filled_changes AS (
     SELECT
         ac.hk_customer,
@@ -92,7 +91,7 @@ filled_changes AS (
     FROM all_changes AS ac
 ),
 
--- 4. Убираем дубликаты
+
 deduped_changes AS (
     SELECT
         fc.hk_customer,
@@ -110,7 +109,7 @@ deduped_changes AS (
     FROM filled_changes AS fc
 ),
 
--- 5. Вычисляем valid_to
+
 scd2_timeline AS (
     SELECT
         dc.hk_customer,
@@ -132,7 +131,7 @@ scd2_timeline AS (
     WHERE dc.rn = 1
 )
 
--- 6. Формируем итоговую витрину
+
 SELECT
     {{ dbt_utils.generate_surrogate_key(['h.customer_key', 's.valid_from']) }} AS customer_sk,
     h.customer_key,

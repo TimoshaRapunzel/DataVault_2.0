@@ -3,11 +3,6 @@
     tags=['business_vault', 'master_data']
 ) }}
 
-/*
-    Business Satellite bridging Raw Vault (Hub Customer) and Seed Data (Marketing).
-    Compliance with TЗ: "создать бизнес-сателлит, объединяющий Raw Vault и Seed-данные".
-*/
-
 SELECT
     h.hk_customer,
     s.marketing_segment,

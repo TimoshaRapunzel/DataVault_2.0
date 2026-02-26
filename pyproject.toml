@@ -29,7 +29,7 @@ build-backend = "hatchling.build"
 [tool.ruff]
 target-version = "py311"
 line-length = 100
-# Включаем preview, чтобы работали правила группы FURB по требованию ТЗ
+# Enable preview for FURB rules
 preview = true
 src = ["airflow"]
 
@@ -37,7 +37,7 @@ src = ["airflow"]
 select = [
     "E", "F", "I", "N", "UP", "S", "B", "C4", "SIM", "TID", "RUF",
     "Q", "FA", "ISC", "PIE", "PT",
-    # === Новые правила по требованию аудита ===
+    # Audit required rules
     "W",    # pycodestyle warnings
     "RSE",  # flake8-raise
     "RET",  # flake8-return
@@ -48,7 +48,7 @@ ignore = [
     "S101",
     "S105",
     "B008",
-    "ISC001" # Рекомендуется отключать при использовании ruff-format
+    "ISC001" # Recommended to disable when using ruff-format
 ]
 
 [tool.ruff.format]

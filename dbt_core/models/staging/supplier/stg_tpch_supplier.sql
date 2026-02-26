@@ -14,17 +14,10 @@ WITH source AS (
 
 enriched AS (
     SELECT
-        -- Генерируем хэш-ключи для Хабов
         {{ hash_key('supplier_key') }} AS hk_supplier,
         {{ hash_key('nation_key') }} AS hk_nation,
-
-        -- Генерируем хэш-ключ для Линка (Связь Поставщика и Страны)
         {{ multi_hash_key(['supplier_key', 'nation_key']) }} AS hk_supplier_nation,
-
-        -- Генерируем хэш-дифф для Сателлита (отслеживаем изменения в этих полях)
         {{ hash_diff(['supplier_name', 'address', 'phone', 'account_balance', 'comment']) }} AS hashdiff,
-
-        -- Прокидываем сырые поля
         supplier_key,
         nation_key,
         supplier_name,
@@ -33,7 +26,6 @@ enriched AS (
         account_balance,
         comment,
 
-        -- Технические поля Data Vault
         CURRENT_TIMESTAMP() AS load_ts,
         'SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.SUPPLIER' AS record_source
     FROM source

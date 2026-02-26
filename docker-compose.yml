@@ -12,18 +12,14 @@ x-airflow-common: &airflow-common
     AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW__WEBSERVER__SECRET_KEY:-this_is_a_very_secret_key_for_local_dev}
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: "true"
 
-    # === Переменные для Telegram ===
     AIRFLOW_VAR_TELEGRAM_SECRET_TOKEN: ${TELEGRAM_BOT_TOKEN}
-    #AIRFLOW_VAR_TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
 
-    # === Увеличенные таймауты для Cosmos ===
     AIRFLOW__CORE__DAGBAG_IMPORT_TIMEOUT: 120
     AIRFLOW__CORE__DAG_FILE_PROCESSOR_TIMEOUT: 120
 
     DBT_PROJECT_DIR: /opt/dbt_core
     DBT_PROFILES_DIR: /opt/dbt_core
 
-    # === Snowflake ===
     SNOWFLAKE_ACCOUNT: ${SNOWFLAKE_ACCOUNT}
     SNOWFLAKE_USER: ${SNOWFLAKE_USER}
     SNOWFLAKE_PASSWORD: ${SNOWFLAKE_PASSWORD}
@@ -31,19 +27,14 @@ x-airflow-common: &airflow-common
     SNOWFLAKE_WAREHOUSE: ${SNOWFLAKE_WAREHOUSE}
     SNOWFLAKE_DATABASE: ${SNOWFLAKE_DATABASE}
 
-    # === Автоматические коннекшны ===
-    # === Автоматические коннекшны ===
     AIRFLOW_CONN_SNOWFLAKE_DEFAULT: '{"conn_type": "snowflake", "login": "${SNOWFLAKE_USER}", "password": "${SNOWFLAKE_PASSWORD}", "extra": {"account": "${SNOWFLAKE_ACCOUNT}", "database": "${SNOWFLAKE_DATABASE}", "warehouse": "${SNOWFLAKE_WAREHOUSE}", "role": "${SNOWFLAKE_ROLE}"}}'
     AIRFLOW_CONN_TELEGRAM_DEFAULT: "http://:${TELEGRAM_BOT_TOKEN}@/?chat_id=${TELEGRAM_CHAT_ID}"
 
-    # === PYTHONPATH: Добавляем папку dags, чтобы импорты 'from utils...' работали везде ===
     PYTHONPATH: "/opt/airflow/dags:/opt/airflow/plugins"
 
   volumes:
     - ./airflow/dags:/opt/airflow/dags
     - ./airflow/plugins:/opt/airflow/plugins
-    # === ИСПРАВЛЕНИЕ: Удалена строка ./airflow/utils:/opt/airflow/utils ===
-    # Все файлы (telegram.py, callbacks.py) должны лежать в ./airflow/dags/utils/
     - ./dbt_core:/opt/dbt_core
     - ./logs:/opt/airflow/logs
   depends_on:
@@ -52,7 +43,6 @@ x-airflow-common: &airflow-common
   networks:
     - airflow-net
 
-# Остальные части (services: postgres, webserver и т.д.) остаются без изменений
 services:
   postgres:
     image: postgres:15-alpine

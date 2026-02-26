@@ -20,7 +20,7 @@ vars:
   target_database: RETAIL_VAULT
   load_date: "{{ run_started_at.strftime('%Y-%m-%d') }}"
 
-  # === Глобальные настройки для макросов datavault4dbt ===
+  # Global settings for datavault4dbt macros
   datavault4dbt.load_date_column: 'load_ts'
   datavault4dbt.source_column: 'record_source'
   datavault4dbt.hash_key_alias: 'hk'
@@ -36,42 +36,42 @@ seeds:
 
 models:
   retail_vault:
-    # 1. Слой подготовки данных
+    # Data Preparation Layer
     staging:
       +schema: STAGING
       +materialized: incremental
       +incremental_strategy: append
       +tags: ["staging"]
 
-    # 2. Сырой слой Data Vault
+    # Raw Data Vault Layer
     raw_vault:
       hubs:
         +schema: RAW_VAULT
         +materialized: incremental
-        +incremental_strategy: append  # <--- ИСПРАВЛЕНО на append
+        +incremental_strategy: append
         +tags: ["raw_vault", "hub"]
       links:
         +schema: RAW_VAULT
         +materialized: incremental
-        +incremental_strategy: append  # <--- ИСПРАВЛЕНО на append
+        +incremental_strategy: append
         +tags: ["raw_vault", "link"]
       satellites:
         +schema: RAW_VAULT
         +materialized: incremental
-        +incremental_strategy: append  # <--- ИСПРАВЛЕНО на append
+        +incremental_strategy: append
         +tags: ["raw_vault", "satellite"]
 
-    # 3. Бизнес-слой (PIT таблицы, Bridge, Helper Views)
+    # Business Layer (PIT tables, Bridges, etc.)
     business_vault:
       +schema: BUSINESS_VAULT
       +tags: ["business_vault"]
 
-    # 4. Слой витрин данных (Факты и Измерения)
+    # Information Mart Layer (Facts and Dimensions)
     marts:
       +schema: MARTS
       +tags: ["mart"]
 
-    # 5. Слой представления (Безопасные витрины с RLS)
+    # Presentation Layer (Secure Views with RLS)
     presentation:
       +schema: PRESENTATION
       +materialized: view

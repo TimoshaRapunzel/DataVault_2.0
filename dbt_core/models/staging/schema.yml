@@ -8,7 +8,6 @@ models:
         tests: [not_null, unique]
       - name: customer_key
         tests: [not_null, unique]
-      # ИСПРАВЛЕНИЕ: Заменили hashdiff на два реальных хэша
       - name: hd_customer_core
         tests: [not_null]
       - name: hd_customer_contact

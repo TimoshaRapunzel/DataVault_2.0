@@ -32,7 +32,6 @@ enriched AS (
         CURRENT_TIMESTAMP() AS load_ts,
         'SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.ORDERS' AS record_source,
 
-        -- Даты для Effectivity Satellite:
         CURRENT_TIMESTAMP() AS start_date,
         TO_TIMESTAMP('9999-12-31 23:59:59') AS end_date
     FROM source

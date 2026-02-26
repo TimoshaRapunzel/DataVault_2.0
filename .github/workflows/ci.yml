@@ -7,7 +7,6 @@ on:
     branches: [master, main]
 
 jobs:
-  # 1. Строгое имя по ТЗ
   secrets-guard:
     name: "secrets-guard"
     runs-on: ubuntu-latest
@@ -20,7 +19,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # 2. Строгое имя по ТЗ
   dbt-check:
     name: "dbt-check"
     needs: secrets-guard
@@ -42,7 +40,6 @@ jobs:
           dbt deps
           dbt compile --target dev
         env:
-          # ИСПРАВЛЕНО: Теперь используем GitHub Secrets вместо "test"
           SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
           SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
           SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}

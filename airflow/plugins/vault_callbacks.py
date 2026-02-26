@@ -6,7 +6,6 @@ from utils.telegram import send_telegram_message
 
 
 def on_failure_callback(context: Context):
-    """Callback for task failure."""
     task_instance = context.get("task_instance")
     if not task_instance:
         return
