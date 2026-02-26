@@ -32,7 +32,8 @@ x-airflow-common: &airflow-common
     SNOWFLAKE_DATABASE: ${SNOWFLAKE_DATABASE}
 
     # === Автоматические коннекшны ===
-    AIRFLOW_CONN_SNOWFLAKE_DEFAULT: "snowflake://${SNOWFLAKE_USER}:${SNOWFLAKE_PASSWORD}@${SNOWFLAKE_ACCOUNT}/${SNOWFLAKE_DATABASE}/RAW_VAULT?warehouse=${SNOWFLAKE_WAREHOUSE}&role=${SNOWFLAKE_ROLE}"
+    # === Автоматические коннекшны ===
+    AIRFLOW_CONN_SNOWFLAKE_DEFAULT: '{"conn_type": "snowflake", "login": "${SNOWFLAKE_USER}", "password": "${SNOWFLAKE_PASSWORD}", "extra": {"account": "${SNOWFLAKE_ACCOUNT}", "database": "${SNOWFLAKE_DATABASE}", "warehouse": "${SNOWFLAKE_WAREHOUSE}", "role": "${SNOWFLAKE_ROLE}"}}'
     AIRFLOW_CONN_TELEGRAM_DEFAULT: "http://:${TELEGRAM_BOT_TOKEN}@/?chat_id=${TELEGRAM_CHAT_ID}"
 
     # === PYTHONPATH: Добавляем папку dags, чтобы импорты 'from utils...' работали везде ===
