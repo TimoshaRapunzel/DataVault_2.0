@@ -6,13 +6,29 @@
 ) }}
 
 -- 1. Определяем, какие клиенты обновились
+-- 1. Определяем, какие клиенты обновились
 WITH changed_customers AS (
     {% if is_incremental() %}
-        SELECT cc.hk_customer FROM {{ ref('sat_customer_core') }} AS cc WHERE cc.load_ts > (SELECT COALESCE(MAX(t.valid_from), '1900-01-01') FROM {{ this }} AS t)
-        UNION
-        SELECT ccont.hk_customer FROM {{ ref('sat_customer_contact') }} AS ccont WHERE ccont.load_ts > (SELECT COALESCE(MAX(t2.valid_from), '1900-01-01') FROM {{ this }} AS t2)
+        SELECT cc.hk_customer
+        FROM {{ ref('sat_customer_core') }} AS cc
+        WHERE
+            cc.load_ts > (
+                SELECT COALESCE(MAX(t.valid_from), '1900-01-01')
+                FROM {{ this }} AS t
+            )
+
+        UNION DISTINCT
+
+        SELECT ccont.hk_customer
+        FROM {{ ref('sat_customer_contact') }} AS ccont
+        WHERE
+            ccont.load_ts > (
+                SELECT COALESCE(MAX(t2.valid_from), '1900-01-01')
+                FROM {{ this }} AS t2
+            )
     {% else %}
-        SELECT hc.hk_customer FROM {{ ref('hub_customer') }} AS hc
+        SELECT hc.hk_customer
+        FROM {{ ref('hub_customer') }} AS hc
     {% endif %}
 ),
 
@@ -52,13 +68,27 @@ filled_changes AS (
     SELECT
         ac.hk_customer,
         ac.load_ts AS valid_from,
-        LAST_VALUE(ac.customer_name) IGNORE NULLS OVER (PARTITION BY ac.hk_customer ORDER BY ac.load_ts) AS customer_name,
-        LAST_VALUE(ac.nation_key) IGNORE NULLS OVER (PARTITION BY ac.hk_customer ORDER BY ac.load_ts) AS nation_key,
-        LAST_VALUE(ac.market_segment) IGNORE NULLS OVER (PARTITION BY ac.hk_customer ORDER BY ac.load_ts) AS market_segment,
-        LAST_VALUE(ac.comment) IGNORE NULLS OVER (PARTITION BY ac.hk_customer ORDER BY ac.load_ts) AS comment,
-        LAST_VALUE(ac.address) IGNORE NULLS OVER (PARTITION BY ac.hk_customer ORDER BY ac.load_ts) AS address,
-        LAST_VALUE(ac.phone) IGNORE NULLS OVER (PARTITION BY ac.hk_customer ORDER BY ac.load_ts) AS phone,
-        LAST_VALUE(ac.account_balance) IGNORE NULLS OVER (PARTITION BY ac.hk_customer ORDER BY ac.load_ts) AS account_balance
+        LAST_VALUE(ac.customer_name) IGNORE NULLS OVER (
+            PARTITION BY ac.hk_customer ORDER BY ac.load_ts
+        ) AS customer_name,
+        LAST_VALUE(ac.nation_key) IGNORE NULLS OVER (
+            PARTITION BY ac.hk_customer ORDER BY ac.load_ts
+        ) AS nation_key,
+        LAST_VALUE(ac.market_segment) IGNORE NULLS OVER (
+            PARTITION BY ac.hk_customer ORDER BY ac.load_ts
+        ) AS market_segment,
+        LAST_VALUE(ac.comment) IGNORE NULLS OVER (
+            PARTITION BY ac.hk_customer ORDER BY ac.load_ts
+        ) AS comment,
+        LAST_VALUE(ac.address) IGNORE NULLS OVER (
+            PARTITION BY ac.hk_customer ORDER BY ac.load_ts
+        ) AS address,
+        LAST_VALUE(ac.phone) IGNORE NULLS OVER (
+            PARTITION BY ac.hk_customer ORDER BY ac.load_ts
+        ) AS phone,
+        LAST_VALUE(ac.account_balance) IGNORE NULLS OVER (
+            PARTITION BY ac.hk_customer ORDER BY ac.load_ts
+        ) AS account_balance
     FROM all_changes AS ac
 ),
 
@@ -74,7 +104,9 @@ deduped_changes AS (
         fc.address,
         fc.phone,
         fc.account_balance,
-        ROW_NUMBER() OVER (PARTITION BY fc.hk_customer, fc.valid_from ORDER BY fc.valid_from) AS rn
+        ROW_NUMBER() OVER (
+            PARTITION BY fc.hk_customer, fc.valid_from ORDER BY fc.valid_from
+        ) AS rn
     FROM filled_changes AS fc
 ),
 
@@ -83,7 +115,12 @@ scd2_timeline AS (
     SELECT
         dc.hk_customer,
         dc.valid_from,
-        COALESCE(LEAD(dc.valid_from) OVER (PARTITION BY dc.hk_customer ORDER BY dc.valid_from), TO_TIMESTAMP('9999-12-31 23:59:59')) AS valid_to,
+        COALESCE(
+            LEAD(dc.valid_from) OVER (
+                PARTITION BY dc.hk_customer ORDER BY dc.valid_from
+            ),
+            TO_TIMESTAMP('9999-12-31 23:59:59')
+        ) AS valid_to,
         dc.customer_name,
         dc.nation_key,
         dc.market_segment,

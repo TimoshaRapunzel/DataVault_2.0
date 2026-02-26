@@ -11,24 +11,27 @@
 */
 
 WITH customer_data AS (
-    -- Ссылаемся на исправленную модель витрины
+    -- Ссылаемся на витрину
     SELECT * FROM {{ ref('dim_customer') }}
     -- Фильтруем, чтобы видеть только текущие актуальные версии записей (SCD2)
-    WHERE CURRENT_TIMESTAMP() BETWEEN valid_from AND valid_to
+    -- Используем is_current, так как ты заботливо добавил его в dim_customer
+    WHERE is_current = TRUE
 )
 
 SELECT
-    hk_customer,
+    -- Ключи
+    customer_sk,
+    customer_key,
+
+    -- Бизнес-атрибуты
     customer_name,
     address,
     nation_key,
     phone,
     market_segment,
     account_balance,
-    -- Поля loyalty_tier и is_active должны присутствовать в dim_customer
-    -- Если dbt ругается на их отсутствие, проверь их наличие в сателлитах
-    loyalty_tier,
-    is_active
+    comment
+
 FROM customer_data
 WHERE
     -- 1. Администраторы и системные роли видят все данные

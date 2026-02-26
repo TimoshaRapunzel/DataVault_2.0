@@ -4,13 +4,17 @@ from datetime import datetime
 from airflow import DAG
 from airflow.operators.bash import BashOperator
 
-# Импортируем нашу логику и константы из utils!
+# Импорты
 from utils.callbacks import on_failure_callback, on_success_callback
 from utils.constants import DEFAULT_DBT_PROJECT_DIR
 
 DBT_PROJECT_DIR = os.environ.get("DBT_PROJECT_DIR", DEFAULT_DBT_PROJECT_DIR)
 
-default_args = {"on_failure_callback": on_failure_callback}
+# Перенесли успех сюда для лучшего логирования
+default_args = {
+    "on_failure_callback": on_failure_callback,
+    "on_success_callback": on_success_callback,
+}
 
 with DAG(
     dag_id="retail_vault_cleanup",
@@ -19,7 +23,6 @@ with DAG(
     schedule_interval="@weekly",
     start_date=datetime(2024, 1, 1),
     catchup=False,
-    on_success_callback=on_success_callback,
     tags=["maintenance"],
 ) as dag:
     dbt_clean = BashOperator(

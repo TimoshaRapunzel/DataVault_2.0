@@ -9,7 +9,8 @@ WITH orders AS (
 ),
 
 secure_customers AS (
-    SELECT hk_customer
+    -- Берем ключи клиентов, которые доступны текущему пользователю
+    SELECT customer_key
     FROM {{ ref('sec_dim_customer') }}
 )
 
@@ -23,6 +24,6 @@ SELECT
     o.clerk,
     o.ship_priority
 FROM orders AS o
--- Заказы недоступных клиентов отсекутся автоматически благодаря RLS!
+-- Джойнимся по бизнес-ключу customer_key
 INNER JOIN secure_customers AS sc
-    ON o.hk_customer = sc.hk_customer
+    ON o.customer_key = sc.customer_key
