@@ -1,5 +1,5 @@
 TG_SECRETS_VAR = "telegram_secret_token"
-TG_CHAT_ID_VAR = "telegram_chat_id"  # <-- ДОБАВЛЕНО (для telegram.py)
+TG_CHAT_ID_VAR = "telegram_chat_id"
 TG_SUBSCRIBERS_VAR = "telegram_subscribers"
 TG_API_URL_BASE = "https://api.telegram.org/bot"
 SNOWFLAKE_CONN_ID = "snowflake_default"

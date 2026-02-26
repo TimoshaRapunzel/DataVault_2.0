@@ -3,8 +3,6 @@ import os
 
 import requests
 from airflow.models import Variable
-
-# E402 ИСПРАВЛЕНИЕ: Импорты подняты на самый верх
 from utils.constants import TG_CHAT_ID_VAR, TG_SECRETS_VAR
 
 logger = logging.getLogger("airflow.task")
@@ -25,13 +23,12 @@ def send_telegram_message(text: str):
             url, json={"chat_id": chat_id, "text": text, "parse_mode": "HTML"}, timeout=10
         )
         r.raise_for_status()
-    # BLE001 ИСПРАВЛЕНИЕ: Ловим конкретную ошибку сети
+
     except requests.exceptions.RequestException as e:
         logger.error(f"TG Text Error: {e}")
 
 
 def send_local_photo(text: str, photo_path: str):
-    # RUF002 ИСПРАВЛЕНИЕ: Английский докстринг без "опасных" кириллических букв
     """Send photo with caption. Fallback to text if photo is missing."""
     token = Variable.get(TG_SECRETS_VAR, default_var=None)
     chat_id = Variable.get(TG_CHAT_ID_VAR, default_var=None)
@@ -53,7 +50,7 @@ def send_local_photo(text: str, photo_path: str):
                 timeout=10,
             )
             r.raise_for_status()
-    # BLE001 ИСПРАВЛЕНИЕ: Ловим конкретную ошибку сети
+
     except requests.exceptions.RequestException as e:
         logger.error(f"TG Photo Error: {e}")
         send_telegram_message(text)

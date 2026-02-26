@@ -4,7 +4,6 @@ from datetime import datetime
 
 from utils.telegram import send_local_photo
 
-# Используем стандартный логгер Airflow
 logger = logging.getLogger("airflow.task")
 
 

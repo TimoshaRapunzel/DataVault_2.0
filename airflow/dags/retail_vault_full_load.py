@@ -4,8 +4,6 @@ from datetime import datetime
 from airflow import DAG
 from cosmos import DbtTaskGroup, ExecutionConfig, ProfileConfig, ProjectConfig, RenderConfig
 from cosmos.profiles import SnowflakeUserPasswordProfileMapping
-
-# Import logic and constants
 from utils.callbacks import on_failure_callback, on_success_callback
 from utils.constants import (
     DEFAULT_DBT_PROJECT_DIR,
@@ -17,7 +15,7 @@ from utils.constants import (
 
 DBT_PROJECT_DIR = os.environ.get("DBT_PROJECT_DIR", DEFAULT_DBT_PROJECT_DIR)
 
-# Cosmos Configuration
+
 _profile_config = ProfileConfig(
     profile_name="retail_vault",
     target_name="dev",
